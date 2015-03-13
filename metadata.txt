@@ -24,9 +24,9 @@ email=gsherman@geoapt.com
 # Tags are comma separated with spaces allowed
 tags=vector
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/g-sherman/pseudo_csv_provider
+tracker=https://github.com/g-sherman/pseudo_csv_provider/issues
+repository=https://github.com/g-sherman/pseudo_csv_provider
 category=Vector
 icon=icon.png
 # experimental flag
