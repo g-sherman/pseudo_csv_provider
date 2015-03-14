@@ -10,7 +10,7 @@
 name=CSV Provider
 qgisMinimumVersion=2.0
 description=Example of "faking" a data provider with PyQGIS
-version=0.1
+version=0.2
 author=GeoApt LLC
 email=gsherman@geoapt.com
 
@@ -19,7 +19,7 @@ email=gsherman@geoapt.com
 # Recommended items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=Fixed typo in dialog
 
 # Tags are comma separated with spaces allowed
 tags=vector
