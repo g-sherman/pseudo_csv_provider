@@ -26,3 +26,11 @@ The provider will:
 * Require the CSV file to have an X and Y field 
 * Support only Point geometries
 
+A few things about this implementation:
+
+* It is an example, not a robust implementation
+* It lacks proper error handling
+* It could be extended to support other geometry types in CSV
+* In its current form, it may not work for other CSV files, depending on how they are formatted (take a look at the *Add Delimited Text Layer* dialog in QGIS to see what I mean)
+* If you want to enhance this for fun or profit---well for fun, fork the <a href="http://github.com/g-sherman/pseudo_csv_provider">repository</a> and give me some pull requests
+
