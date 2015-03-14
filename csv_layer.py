@@ -7,6 +7,7 @@ from qgis.core import (QgsVectorLayer, QgsFeature, QgsGeometry, QgsPoint,
 
 logger = lambda msg: QgsMessageLog.logMessage(msg, 'CSV Provider Example', 1)
 
+
 class CsvLayer():
     """ Pretend we are a data provider """
 
@@ -86,55 +87,59 @@ class CsvLayer():
         self.lyr.commitChanges()
 
     def editing_started(self):
-        # Connect to the edit buffer so we can capture geometry and attribute
-        # changes
-        #self.lyr.editBuffer().committedGeometriesChanges.connect(self.geometries_changed)
-        self.lyr.editBuffer().committedAttributeValuesChanges.connect(self.attributes_changed)
+        """ Connect to the edit buffer so we can capture geometry and attribute
+        changes """
+        self.lyr.editBuffer().committedAttributeValuesChanges.connect(
+            self.attributes_changed)
 
     def editing_stopped(self):
-        # Update the CSV file if changes were committed
-        logger("Updating the CSV")
-        features = self.lyr.getFeatures()
-        tempfile = NamedTemporaryFile(mode='w', delete=False)
-        writer = csv.writer(tempfile, delimiter=',')
-        # write the header
-        writer.writerow(self.header)
-        for feature in features:
-            row = []
-            for fld in self.header:
-                # set x and y to current values
-                #pt = feature.geometry().asPoint()
-                #feature.setAttribute('X', pt.x())
-                #feature.setAttribute('Y', pt.y())
-                row.append(feature[feature.fieldNameIndex(fld)])
-            writer.writerow(row)
+        """ Update the CSV file if changes were committed """
+        if self.dirty:
+            logger("Updating the CSV")
+            features = self.lyr.getFeatures()
+            tempfile = NamedTemporaryFile(mode='w', delete=False)
+            writer = csv.writer(tempfile, delimiter=',')
+            # write the header
+            writer.writerow(self.header)
+            for feature in features:
+                row = []
+                for fld in self.header:
+                    row.append(feature[feature.fieldNameIndex(fld)])
+                writer.writerow(row)
 
-        tempfile.close()
-        shutil.move(tempfile.name, self.csv_path)
+            tempfile.close()
+            shutil.move(tempfile.name, self.csv_path)
 
-        self.dirty = False
+            self.dirty = False
 
     def attributes_changed(self, layer, changes):
+        """ Attribute values changed; set the dirty flag """
         if not self.doing_attr_update:
             logger("attributes changed")
             self.dirty = True
 
     def features_added(self, layer, features):
+        """ Features added; update the X and Y attributes for each and set the
+        dirty flag
+        """
         logger("features added")
         for feature in features:
             self.geometry_changed(feature.id(), feature.geometry())
         self.dirty = True
 
     def features_removed(self, layer, feature_ids):
+        """ Features removed; set the dirty flag """
         logger("features removed")
         self.dirty = True
 
     def geometry_changed(self, fid, geom):
-            feature = self.lyr.getFeatures(QgsFeatureRequest(fid)).next()
-            pt = geom.asPoint()
-            logger("Updating feature {} ({}) X and Y attributes to: {}".format(
-                fid, feature['NAME'], pt.toString()))
-            self.lyr.changeAttributeValue(fid, feature.fieldNameIndex('X'),
-                                          pt.x())
-            self.lyr.changeAttributeValue(fid, feature.fieldNameIndex('Y'),
-                                          pt.y())
+        """ Geometry for a feature changed; update the X and Y attributes for
+        each """
+        feature = self.lyr.getFeatures(QgsFeatureRequest(fid)).next()
+        pt = geom.asPoint()
+        logger("Updating feature {} ({}) X and Y attributes to: {}".format(
+            fid, feature['NAME'], pt.toString()))
+        self.lyr.changeAttributeValue(fid, feature.fieldNameIndex('X'),
+                                      pt.x())
+        self.lyr.changeAttributeValue(fid, feature.fieldNameIndex('Y'),
+                                      pt.y())

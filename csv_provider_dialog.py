@@ -40,7 +40,6 @@ class CSVProviderDialog(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.toolButton.clicked.connect(self.select_file)
-        self.lineEdit.setText('/Users/gsherman/development/plugins/fake_provider/cities.csv')
 
     def select_file(self):
         csv_file = QtGui.QFileDialog.getOpenFileName(None, "Select CSV File",
